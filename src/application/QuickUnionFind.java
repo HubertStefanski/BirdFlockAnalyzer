@@ -36,14 +36,15 @@ public class QuickUnionFind implements UnionFind {
 		int x = root(p);
 		int y = root(q);
 
-		if (size[x] < size[y]) {
-			id[x] = y;
-			size[y] += size[x];
-		} else {
-			id[y] = x;
-			size[x] += size[y];
+		if (x != y) {
+			if (size[x] < size[y]) {
+				id[x] = y;
+				size[y] += size[x];
+			} else {
+				id[y] = x;
+				size[x] += size[y];
+			}
 		}
-
 	}
 
 	@Override

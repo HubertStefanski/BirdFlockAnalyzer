@@ -15,7 +15,7 @@ public class ImageAnalysisForPixelGroups {
 		this.setNoiseReduction((noiseReduction > 1 ? noiseReduction : 1));
 	}
 
-	public static List<PixelGroups> findPixelGroups(BufferedImage bi) {
+	public static List<PixelGroups> findPixelGroups(BufferedImage bi, int noiseReduction) {
 		int imageHeightInt = (int) MainMenuController.bufferedImage.getHeight();
 		int imageWidthInt = (int) MainMenuController.bufferedImage.getWidth();
 		QuickUnionFind uFind = new QuickUnionFind(imageWidthInt * imageHeightInt);
@@ -66,7 +66,7 @@ public class ImageAnalysisForPixelGroups {
 		}
 		// returns coordinates for each node in tree to enable to draw a boxes
 		List<PixelGroups> pixelGroups = new ArrayList<PixelGroups>();
-		for (int root : uFind.getRoots(1)) {
+		for (int root : uFind.getRoots(noiseReduction)) {
 			List<Integer> treeElements = uFind.getElementsOfTree(root);
 			int firstNode = treeElements.get(0);
 			int lastNode = treeElements.get(treeElements.size() - 1);

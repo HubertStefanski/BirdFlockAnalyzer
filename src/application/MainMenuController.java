@@ -44,7 +44,7 @@ public class MainMenuController {
 	@FXML
 	Slider setGammaSlider, setContrastSlider, setBrightnessSlider, setNoiseReductionSlider;
 	@FXML
-	static Slider setThresholdSlider;
+	Slider setThresholdSlider;
 	@FXML
 	RadioMenuItem sequentiallyLabelRadioMenuItem;
 	@FXML
@@ -65,6 +65,8 @@ public class MainMenuController {
 	public static int imageHeight;
 	String imageWidthString, imageHeightString;
 
+	private int currentNoiseReduction = 1;
+	
 	/*
 	 * >Opens File chooser >user picks file >method converts the file into
 	 * appropriate format >method sets the file with appropriate format into
@@ -125,72 +127,22 @@ public class MainMenuController {
 
 	@FXML
 	public void analyseFlockData(ActionEvent e) {
-		List <PixelGroups> pgs =  ImageAnalysisForPixelGroups.findPixelGroups(ToBlackAndWhiteConverter.bufferedBwImage);
+		List <PixelGroups> pgs =  ImageAnalysisForPixelGroups.findPixelGroups(ToBlackAndWhiteConverter.bufferedBwImage, currentNoiseReduction);
 		drawBoxforEachPixelGroup(pgs);
 
 	}
 
 	@FXML
-	public void Initialize() {
-//		setBrightnessSlider.valueProperty().addListener(new ChangeListener<Number>() {
-//
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable, Number oldVal, Number newVal) {
-//				// TODO Auto-generated method stub
-//				int imageHeightInt = imageHeight;
-//				int imageWidthInt = imageWidth;
-//
-//				imageHeightInt = (int) image.getHeight();
-//				imageWidthInt = (int) image.getWidth();
-//
-//				double originalVal = 127;
-////				double newValSlider = setBrightnessSlider.getValue();
-////				double oldValSlider = setBrightnessSlider.getValue() - originalVal;
-////				originalVal = setBrightnessSlider.getValue();
-//
-////				double newVal = newValSlider;
-////				double oldVal = oldValSlider;
-//
-//				int brightness;
-//				if (newVal > 0) {
-//					brightness = 2;
-//				} else {
-//					brightness = -2;
-//				}
-//
-//				BufferedImage bi = new BufferedImage(imageHeightInt, imageWidthInt, 0);
-//
-//				for (int x = 0; x < imageWidthInt; x++) {
-//					for (int y = 0; y < imageHeightInt; x++) {
-//						int rgb = bufferedImage.getRGB(x, y);
-//
-//						int r = (rgb >> 16) & 0xff;
-//						int g = (rgb >> 8) & 0xff;
-//						int b = (rgb >> 0) & 0xff;
-//
-//						r += ((brightness * r) / 100);
-//						g += ((brightness * g) / 100);
-//						b += ((brightness * b) / 100);
-//
-//						r = Math.min(Math.max(0, r), 255);
-//						g = Math.min(Math.max(0, g), 255);
-//						b = Math.min(Math.max(0, b), 255);
-//
-//						rgb = (rgb & 0xff000000) | (r << 16) | (g << 8) | (b << 0);
-//
-//						bi.setRGB(x, y, rgb);
-//
-//						image = SwingFXUtils.toFXImage(bi, null);
-//						mainImageView.setImage(image);
-//
-//					}
-//					return;
-//				}
-//
-//			}
-//
-//		});
-//
+	public void initialize() {
+		System.out.println("Init");
+		setNoiseReductionSlider.setValue(currentNoiseReduction);
+		setNoiseReductionSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("Current Noise Reduction is now : " + currentNoiseReduction);
+				currentNoiseReduction = newValue.intValue();
+			}
+		});
 	}
 	/*
 	 * Shuts down the application
