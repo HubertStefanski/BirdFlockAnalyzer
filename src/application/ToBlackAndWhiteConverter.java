@@ -19,7 +19,7 @@ class ToBlackAndWhiteConverter {
 	static BufferedImage bufferedBwImage;
 	static int threshold = 127;
 
-	static Image processToBlackAndWhite(Image image) {
+	static Image processToBlackAndWhite(Image image,int threshold) {
 		Image localImage;
 		localImage = SwingFXUtils.toFXImage(MainMenuController.bufferedImage, null);
 		System.out.println(">image reading to pixel reader");

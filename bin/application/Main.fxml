@@ -79,7 +79,8 @@
                   <Slider fx:id="setThresholdSlider" blockIncrement="1.0" layoutX="14.0" layoutY="227.0" max="255.0" showTickLabels="true" showTickMarks="true" value="127.0" />
                   <Slider fx:id="setNoiseReductionSlider" layoutX="18.0" layoutY="285.0" />
                   <Label layoutX="17.0" layoutY="264.0" text="Noise Reduction Level" />
-                  <Text fx:id="noiseReductionValueText" layoutX="152.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                  <Text fx:id="noiseReductionValueText" layoutX="154.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="41.33335053920746" />
+                  <Text fx:id="thresholdLevelSliderValueText" layoutX="152.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" />
 					</children>
 				</AnchorPane>
 				<ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -135,7 +136,7 @@
 						<Label layoutX="17.0" layoutY="192.0" text="Flock pattern:" />
 						<Text fx:id="fileNameText" layoutX="78.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" />
 						<Text fx:id="fileDimensionsText" layoutX="85.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="112.66668701171875" />
-						<Text fx:id="filePathText" layoutX="72.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.0" />
+						<Text fx:id="filePathText" layoutX="64.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="254.33338165283203" />
 						<Text fx:id="numberOfBirdsText" layoutX="78.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" />
 						<Text fx:id="flockPatternText" layoutX="100.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" />
 					</children>

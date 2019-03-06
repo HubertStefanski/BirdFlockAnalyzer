@@ -49,7 +49,7 @@ public class MainMenuController {
 	Button analyseFlockDataButton;
 	@FXML
 	Text fileNameText, fileDimensionText, filePathText, numberOfBirdsText, FlockPatternText, brightnessText,
-			noiseReductionValueText;
+			noiseReductionValueText, thresholdLevelSliderValueText;
 	/*
 	 * Variable initialization
 	 */
@@ -57,12 +57,11 @@ public class MainMenuController {
 	public static Image image;
 	public static BufferedImage bufferedImage;
 
-	Slider setBrighntessSlider = new Slider(-1, 1, 0.1);
-
 	File selectedFile;
 	public static int imageWidth;
 	public static int imageHeight;
 	String imageWidthString, imageHeightString;
+	int numberOfBirdsInt;
 	private int currentNoiseReduction = 1;
 
 	/*
@@ -88,7 +87,7 @@ public class MainMenuController {
 				bufferedImage = ImageIO.read(selectedFile);
 				image = SwingFXUtils.toFXImage(bufferedImage, null);
 				String fileName = selectedFile.getName();
-//				String filePath = selectedFile.getAbsolutePath();
+				String filePath = selectedFile.getAbsolutePath();
 				double imageWidthDouble = image.getWidth();
 				double imageHeigthDouble = image.getHeight();
 				imageWidthString = Double.toString(imageHeigthDouble);
@@ -97,7 +96,7 @@ public class MainMenuController {
 				mainImageView.setImage(image);
 				processSetToBlackAndWhite();
 				analyseFlockData(e);
-				// filePathText.setText(filePath);
+				filePathText.setText(filePath);
 				fileNameText.setText(fileName);
 				// fileDimensionText.setText("imageHeightString" + "imageWidthString");
 
@@ -116,7 +115,8 @@ public class MainMenuController {
 
 	public void processSetToBlackAndWhite() {
 		System.out.println(">Image sent to conversion");
-		Image processedBWImage = ToBlackAndWhiteConverter.processToBlackAndWhite(image);
+		Image processedBWImage = ToBlackAndWhiteConverter.processToBlackAndWhite(image,
+				ToBlackAndWhiteConverter.threshold);
 		System.out.println(">Image converted");
 		System.out.println(">Setting converted image to image view");
 		blackAndWhiteImageView.setFitHeight(163);
@@ -133,21 +133,6 @@ public class MainMenuController {
 		drawBoxforEachPixelGroup(pgs);
 	}
 
-	@FXML
-	public void Initialize() {
-		System.out.println("init");
-		setNoiseReductionSlider.setValue(currentNoiseReduction);
-		setNoiseReductionSlider.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				System.out.println("Current noise reduction level is now : " + currentNoiseReduction);
-				noiseReductionValueText.setText(Integer.toString(currentNoiseReduction));
-				currentNoiseReduction = newValue.intValue();
-			}
-
-		});
-
-	}
 	/*
 	 * Shuts down the application
 	 */
@@ -163,8 +148,35 @@ public class MainMenuController {
 		}
 		image = SwingFXUtils.toFXImage(bufferedImage, null);
 		mainImageView.setImage(image);
+		numberOfBirdsInt = pgs.size();
 
-		numberOfBirdsText.setText((Integer.toString(pgs.size())));
+		numberOfBirdsText.setText(Integer.toString(numberOfBirdsInt));
+	}
+
+	@FXML
+	public void initialize() {
+		System.out.println("init");
+		setNoiseReductionSlider.setValue(currentNoiseReduction);
+		setNoiseReductionSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				currentNoiseReduction = newValue.intValue();
+				noiseReductionValueText.setText(Integer.toString(currentNoiseReduction));
+				numberOfBirdsText.setText(Integer.toString(numberOfBirdsInt));
+				drawBoxforEachPixelGroup(null);
+			}
+
+		});
+		setThresholdSlider.setValue(ToBlackAndWhiteConverter.threshold);
+		setThresholdSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				ToBlackAndWhiteConverter.threshold = newValue.intValue();
+				processSetToBlackAndWhite();
+				thresholdLevelSliderValueText.setText(Integer.toString(ToBlackAndWhiteConverter.threshold));
+			}
+		});
 	}
 
 	@FXML
