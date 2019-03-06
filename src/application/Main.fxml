@@ -10,6 +10,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
@@ -27,13 +28,15 @@
 				</Menu>
 				<Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
 					<items>
-						<MenuItem fx:id="openFileMenuItem" mnemonicParsing="false" onAction="#openFileChooser" text="Open…" />
+						<MenuItem fx:id="openFileMenuItem" mnemonicParsing="false" onAction="#openFileChooser" text="Open…">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
 					</items>
 				</Menu>
             <Menu fx:id="viewOptionsMenu" mnemonicParsing="false" text="View Options">
               <items>
                   <RadioMenuItem fx:id="sequentiallyLabelRadioMenuItem" mnemonicParsing="false" text="Sequentiall Labeling" />
-                  <MenuItem fx:id="viewBlackAndWhiteMenuItem" mnemonicParsing="false" onAction="#processSetToBlackAndWhite" text="View Black And White" />
               </items>
             </Menu>
 				<Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
@@ -61,8 +64,6 @@
 						<Label layoutX="25.0" layoutY="111.0" text="Contrast" />
 						<Label layoutX="27.0" layoutY="146.0" text="Brightness" />
 						<Slider fx:id="setBrightnessSlider" blockIncrement="0.1" layoutX="14.0" layoutY="170.0" majorTickUnit="3.0" max="1.0" min="-1.0" minorTickCount="25" showTickLabels="true" />
-						<Button fx:id="setToBlackAndWhiteButton" layoutX="14.0" layoutY="41.0" mnemonicParsing="false" onAction="#processSetToBlackAndWhite" text="Set to Black And White" />
-						<Label layoutX="174.0" layoutY="45.0" text="Required" />
 						<Label layoutX="21.0" layoutY="339.0" prefHeight="65.0" prefWidth="137.0" text="^^^^^^^^^^^^^^^^Set to best show outline of birds in flock" wrapText="true" />
 						<Button fx:id="analyseFlockDataButton" layoutX="19.0" layoutY="411.0" mnemonicParsing="false" onAction="#analyseFlockData" prefHeight="48.0" prefWidth="137.0" text="Analyse Flock Data">
 							<font>
@@ -77,6 +78,8 @@
                   <Label layoutX="17.0" layoutY="209.0" text="Black and White Threshold" />
                   <Slider fx:id="setThresholdSlider" blockIncrement="1.0" layoutX="14.0" layoutY="227.0" max="255.0" showTickLabels="true" showTickMarks="true" value="127.0" />
                   <Slider fx:id="setNoiseReductionSlider" layoutX="18.0" layoutY="285.0" />
+                  <Label layoutX="17.0" layoutY="264.0" text="Noise Reduction Level" />
+                  <Text fx:id="noiseReductionValueText" layoutX="152.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" />
 					</children>
 				</AnchorPane>
 				<ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -85,7 +88,7 @@
 							<children>
 								<Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
 								<ImageView fx:id="mainImageView" fitHeight="278.0" fitWidth="399.0" layoutX="16.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
-                        <ImageView fx:id="blackAndWhiteImageView" fitHeight="167.0" fitWidth="374.0" layoutX="31.0" layoutY="364.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="blackAndWhiteImageView" fitHeight="163.0" fitWidth="391.0" layoutX="19.0" layoutY="368.0" pickOnBounds="true" preserveRatio="true" />
                         <Label alignment="CENTER" layoutX="152.0" layoutY="14.0" style="&#10;" text="Original" textAlignment="CENTER" wrapText="false">
                            <font>
                               <Font size="18.0" fx:id="x12" />

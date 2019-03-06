@@ -38,19 +38,18 @@ public class MainMenuController {
 	@FXML
 	Menu systemMenu, fileMenu, helpMenu, viewOptionsMenu;
 	@FXML
-	MenuItem openFileMenuItem, exitMenuItem, aboutMenuItem, viewBlackAndWhiteMenuItem;
+	MenuItem openFileMenuItem, exitMenuItem, aboutMenuItem;
 	@FXML
 	ImageView mainImageView, blackAndWhiteImageView;
 	@FXML
-	Slider setGammaSlider, setContrastSlider, setBrightnessSlider, setNoiseReductionSlider;
-	@FXML
-	static Slider setThresholdSlider;
+	Slider setGammaSlider, setContrastSlider, setBrightnessSlider, setNoiseReductionSlider, setThresholdSlider;
 	@FXML
 	RadioMenuItem sequentiallyLabelRadioMenuItem;
 	@FXML
-	Button setToBlackAndWhiteButton, analyseFlockDataButton;
+	Button analyseFlockDataButton;
 	@FXML
-	Text fileNameText, fileDimensionText, filePathText, numberOfBirdsText, FlockPatternText, brightnessText;
+	Text fileNameText, fileDimensionText, filePathText, numberOfBirdsText, FlockPatternText, brightnessText,
+			noiseReductionValueText;
 	/*
 	 * Variable initialization
 	 */
@@ -64,6 +63,7 @@ public class MainMenuController {
 	public static int imageWidth;
 	public static int imageHeight;
 	String imageWidthString, imageHeightString;
+	private int currentNoiseReduction = 1;
 
 	/*
 	 * >Opens File chooser >user picks file >method converts the file into
@@ -95,6 +95,8 @@ public class MainMenuController {
 				imageHeightString = Double.toString(imageWidthDouble);
 
 				mainImageView.setImage(image);
+				processSetToBlackAndWhite();
+				analyseFlockData(e);
 				// filePathText.setText(filePath);
 				fileNameText.setText(fileName);
 				// fileDimensionText.setText("imageHeightString" + "imageWidthString");
@@ -112,12 +114,13 @@ public class MainMenuController {
 		}
 	}
 
-	@FXML
-	public void processSetToBlackAndWhite(ActionEvent e) {
+	public void processSetToBlackAndWhite() {
 		System.out.println(">Image sent to conversion");
 		Image processedBWImage = ToBlackAndWhiteConverter.processToBlackAndWhite(image);
 		System.out.println(">Image converted");
 		System.out.println(">Setting converted image to image view");
+		blackAndWhiteImageView.setFitHeight(163);
+		blackAndWhiteImageView.setFitWidth(391);
 		blackAndWhiteImageView.setImage(processedBWImage);
 		System.out.println(">converted Image set to image view");
 
@@ -125,131 +128,34 @@ public class MainMenuController {
 
 	@FXML
 	public void analyseFlockData(ActionEvent e) {
-		ImageAnalysisForPixelGroups.findPixelGroups(ToBlackAndWhiteConverter.bufferedBwImage);
-		drawBoxforEachPixelGroup(null);
-
+		List<PixelGroups> pgs = ImageAnalysisForPixelGroups.findPixelGroups(ToBlackAndWhiteConverter.bufferedBwImage,
+				currentNoiseReduction);
+		drawBoxforEachPixelGroup(pgs);
 	}
 
 	@FXML
 	public void Initialize() {
-//		setBrightnessSlider.valueProperty().addListener(new ChangeListener<Number>() {
-//
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable, Number oldVal, Number newVal) {
-//				// TODO Auto-generated method stub
-//				int imageHeightInt = imageHeight;
-//				int imageWidthInt = imageWidth;
-//
-//				imageHeightInt = (int) image.getHeight();
-//				imageWidthInt = (int) image.getWidth();
-//
-//				double originalVal = 127;
-////				double newValSlider = setBrightnessSlider.getValue();
-////				double oldValSlider = setBrightnessSlider.getValue() - originalVal;
-////				originalVal = setBrightnessSlider.getValue();
-//
-////				double newVal = newValSlider;
-////				double oldVal = oldValSlider;
-//
-//				int brightness;
-//				if (newVal > 0) {
-//					brightness = 2;
-//				} else {
-//					brightness = -2;
-//				}
-//
-//				BufferedImage bi = new BufferedImage(imageHeightInt, imageWidthInt, 0);
-//
-//				for (int x = 0; x < imageWidthInt; x++) {
-//					for (int y = 0; y < imageHeightInt; x++) {
-//						int rgb = bufferedImage.getRGB(x, y);
-//
-//						int r = (rgb >> 16) & 0xff;
-//						int g = (rgb >> 8) & 0xff;
-//						int b = (rgb >> 0) & 0xff;
-//
-//						r += ((brightness * r) / 100);
-//						g += ((brightness * g) / 100);
-//						b += ((brightness * b) / 100);
-//
-//						r = Math.min(Math.max(0, r), 255);
-//						g = Math.min(Math.max(0, g), 255);
-//						b = Math.min(Math.max(0, b), 255);
-//
-//						rgb = (rgb & 0xff000000) | (r << 16) | (g << 8) | (b << 0);
-//
-//						bi.setRGB(x, y, rgb);
-//
-//						image = SwingFXUtils.toFXImage(bi, null);
-//						mainImageView.setImage(image);
-//
-//					}
-//					return;
-//				}
-//
-//			}
-//
-//		});
-//
+		System.out.println("init");
+		setNoiseReductionSlider.setValue(currentNoiseReduction);
+		setNoiseReductionSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("Current noise reduction level is now : " + currentNoiseReduction);
+				noiseReductionValueText.setText(Integer.toString(currentNoiseReduction));
+				currentNoiseReduction = newValue.intValue();
+			}
+
+		});
+
 	}
 	/*
 	 * Shuts down the application
 	 */
 
-	@SuppressWarnings("unused")
-	public void stateChanged(ChangeEvent e) {
-		int imageHeightInt = imageHeight;
-		int imageWidthInt = imageWidth;
+	public void drawBoxforEachPixelGroup(List<PixelGroups> pgs) {
+		List<PixelGroups> pgs1 = ImageAnalysisForPixelGroups.findPixelGroups(bufferedImage, currentNoiseReduction);
 
-		imageHeightInt = (int) image.getHeight();
-		imageWidthInt = (int) image.getWidth();
-
-		double originalVal = 127;
-		double newVal = setBrightnessSlider.getValue();
-		double val = setBrightnessSlider.getValue() - originalVal;
-		originalVal = setBrightnessSlider.getValue();
-
-		int brightness;
-		if (newVal > 0) {
-			brightness = 2;
-		} else {
-			brightness = -2;
-		}
-
-		BufferedImage bi = new BufferedImage(imageHeightInt, imageWidthInt, 0);
-
-		for (int x = 0; x < imageWidthInt; x++) {
-			for (int y = 0; y < imageHeightInt; x++) {
-				int rgb = bufferedImage.getRGB(x, y);
-
-				int r = (rgb >> 16) & 0xff;
-				int g = (rgb >> 8) & 0xff;
-				int b = (rgb >> 0) & 0xff;
-
-				r += ((brightness * r) / 100);
-				g += ((brightness * g) / 100);
-				b += ((brightness * b) / 100);
-
-				r = Math.min(Math.max(0, r), 255);
-				g = Math.min(Math.max(0, g), 255);
-				b = Math.min(Math.max(0, b), 255);
-
-				rgb = (rgb & 0xff000000) | (r << 16) | (g << 8) | (b << 0);
-
-				bi.setRGB(x, y, rgb);
-
-				image = SwingFXUtils.toFXImage(bi, null);
-				mainImageView.setImage(image);
-
-			}
-			return;
-		}
-	}
-
-	public void drawBoxforEachPixelGroup(PixelGroups pixelGroup) {
-		List<PixelGroups> pgs = ImageAnalysisForPixelGroups.findPixelGroups(bufferedImage);
-
-		for (PixelGroups pg : pgs) {
+		for (PixelGroups pg : pgs1) {
 			Graphics2D box = bufferedImage.createGraphics();
 			box.setColor(Color.BLUE);
 			box.drawRect(pg.getX1(), pg.getY1(), pg.getX2() - pg.getX1(), pg.getY2() - pg.getY1());
@@ -258,7 +164,7 @@ public class MainMenuController {
 		image = SwingFXUtils.toFXImage(bufferedImage, null);
 		mainImageView.setImage(image);
 
-		numberOfBirdsText.setText((Integer.toString(ImageAnalysisForPixelGroups.getNumberOfPixelGroups())));
+		numberOfBirdsText.setText((Integer.toString(pgs.size())));
 	}
 
 	@FXML
