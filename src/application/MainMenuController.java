@@ -125,8 +125,8 @@ public class MainMenuController {
 
 	@FXML
 	public void analyseFlockData(ActionEvent e) {
-		ImageAnalysisForPixelGroups.findPixelGroups(ToBlackAndWhiteConverter.bufferedBwImage);
-		drawBoxforEachPixelGroup(null);
+		List <PixelGroups> pgs =  ImageAnalysisForPixelGroups.findPixelGroups(ToBlackAndWhiteConverter.bufferedBwImage);
+		drawBoxforEachPixelGroup(pgs);
 
 	}
 
@@ -246,9 +246,7 @@ public class MainMenuController {
 		}
 	}
 
-	public void drawBoxforEachPixelGroup(PixelGroups pixelGroup) {
-		List<PixelGroups> pgs = ImageAnalysisForPixelGroups.findPixelGroups(bufferedImage);
-
+	public void drawBoxforEachPixelGroup(List <PixelGroups> pgs) {
 		for (PixelGroups pg : pgs) {
 			Graphics2D box = bufferedImage.createGraphics();
 			box.setColor(Color.BLUE);
@@ -258,7 +256,7 @@ public class MainMenuController {
 		image = SwingFXUtils.toFXImage(bufferedImage, null);
 		mainImageView.setImage(image);
 
-		numberOfBirdsText.setText((Integer.toString(ImageAnalysisForPixelGroups.getNumberOfPixelGroups())));
+		numberOfBirdsText.setText(Integer.toString(pgs.size()));
 	}
 
 	@FXML

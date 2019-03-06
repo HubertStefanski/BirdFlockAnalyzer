@@ -9,16 +9,13 @@ import java.awt.image.BufferedImage;
 
 public class ImageAnalysisForPixelGroups {
 	private int noiseReduction;
-	private static List<PixelGroups> pixelGroups;
+	private static List<PixelGroups> pixelGroups = new ArrayList<PixelGroups>(0);;
 
 	public ImageAnalysisForPixelGroups(final int noiseReduction) {
 		this.setNoiseReduction((noiseReduction > 1 ? noiseReduction : 1));
 	}
 
 	public static List<PixelGroups> findPixelGroups(BufferedImage bi) {
-
-		BufferedImage biImage = MainMenuController.bufferedImage;
-
 		int imageHeightInt = (int) MainMenuController.bufferedImage.getHeight();
 		int imageWidthInt = (int) MainMenuController.bufferedImage.getWidth();
 		QuickUnionFind uFind = new QuickUnionFind(imageWidthInt * imageHeightInt);
@@ -33,53 +30,51 @@ public class ImageAnalysisForPixelGroups {
 					continue;
 				}
 				// Checks left
-				if (x > 0 && pixel == biImage.getRGB(x - 1, y)) {
+				if (x > 0 && pixel == bi.getRGB(x - 1, y)) {
 					uFind.union(pixelId, getId(x, y - 1, imageWidthInt));
 				}
 				// Checks right
-				if (x < imageWidthInt - 1 && pixel == biImage.getRGB(x + 1, y)) {
+				if (x < imageWidthInt - 1 && pixel == bi.getRGB(x + 1, y)) {
 					uFind.union(pixelId, getId(x + 1, y, imageWidthInt));
 				}
 				// Checks up
-				if (y > 0 && pixel == biImage.getRGB(x, y - 1)) {
+				if (y > 0 && pixel == bi.getRGB(x, y - 1)) {
 					uFind.union(pixelId, getId(x, y - 1, imageWidthInt));
 				}
 				// Checks down
-				if (y < imageHeightInt - 1 && pixel == biImage.getRGB(x, y + 1)) {
+				if (y < imageHeightInt - 1 && pixel == bi.getRGB(x, y + 1)) {
 					uFind.union(pixelId, getId(x, y + 1, imageWidthInt));
 				}
 				// Checks down right
-				if (y < imageHeightInt - 1 && x < imageWidthInt - 1 && pixel == biImage.getRGB(x + 1, y + 1)) {
+				if (y < imageHeightInt - 1 && x < imageWidthInt - 1 && pixel == bi.getRGB(x + 1, y + 1)) {
 					uFind.union(pixelId, getId(x + 1, y + 1, imageWidthInt));
 				}
 				// Checks up left
-				if (y > 0 && x > 0 && pixel == biImage.getRGB(x - 1, y - 1)) {
+				if (y > 0 && x > 0 && pixel == bi.getRGB(x - 1, y - 1)) {
 					uFind.union(pixelId, getId(x - 1, y - 1, imageWidthInt));
 				}
 				// Checks down left
-				if (y > 0 && x < imageWidthInt - 1 && pixel == biImage.getRGB(x + 1, y - 1)) {
+				if (y > 0 && x < imageWidthInt - 1 && pixel == bi.getRGB(x + 1, y - 1)) {
 					uFind.union(pixelId, getId(x + 1, y - 1, imageWidthInt));
 				}
 				// Checks up right
-				if (y < imageHeightInt - 1 && x > 0 && pixel == biImage.getRGB(x - 1, y + 1)) {
+				if (y < imageHeightInt - 1 && x > 0 && pixel == bi.getRGB(x - 1, y + 1)) {
 					uFind.union(pixelId, getId(x - 1, y + 1, imageWidthInt));
 				}
 
 			}
 		}
 		// returns coordinates for each node in tree to enable to draw a boxes
-
-		Image image = ToBlackAndWhiteConverter.bwImage;
 		List<PixelGroups> pixelGroups = new ArrayList<PixelGroups>();
 		for (int root : uFind.getRoots(1)) {
 			List<Integer> treeElements = uFind.getElementsOfTree(root);
 			int firstNode = treeElements.get(0);
 			int lastNode = treeElements.get(treeElements.size() - 1);
 
-			final int x1 = (int) (firstNode % image.getWidth());
-			final int y1 = (int) (firstNode / image.getWidth());
-			final int x2 = (int) (lastNode % image.getWidth());
-			final int y2 = (int) (lastNode / image.getWidth());
+			final int x1 = (int) (firstNode % bi.getWidth());
+			final int y1 = (int) (firstNode / bi.getWidth());
+			final int x2 = (int) (lastNode % bi.getWidth());
+			final int y2 = (int) (lastNode / bi.getWidth());
 
 			pixelGroups.add(new PixelGroups(x1, y1, x2, y2));
 
