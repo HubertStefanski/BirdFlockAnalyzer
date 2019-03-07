@@ -17,28 +17,22 @@ class ToBlackAndWhiteConverter {
 	static int bwPixel = 0;
 	static WritableImage bwImage;
 	static BufferedImage bufferedBwImage;
-	static int threshold = 127;
 
 	static Image processToBlackAndWhite(Image image,int threshold) {
-		Image localImage;
-		localImage = SwingFXUtils.toFXImage(MainMenuController.bufferedImage, null);
 		System.out.println(">image reading to pixel reader");
-		PixelReader pixelReader = localImage.getPixelReader();
+		PixelReader pixelReader = image.getPixelReader();
 
 		System.out.println(">image reading COMPLETED");
 
-		int imageHeightInt = MainMenuController.imageHeight;
-		int imageWidthInt = MainMenuController.imageWidth;
-
-		imageHeightInt = (int) localImage.getHeight();
-		imageWidthInt = (int) localImage.getWidth();
-
-		bwImage = new WritableImage(imageWidthInt, imageHeightInt);
+		int imageWidth = (int) image.getWidth();
+		int imageHeight = (int) image.getHeight();
+		
+		bwImage = new WritableImage(imageWidth, imageHeight);
 
 		@SuppressWarnings("unused")
 		PixelWriter pixelWriter = bwImage.getPixelWriter();
-		for (int x = 0; x < imageWidthInt; x++) {
-			for (int y = 0; y < imageHeightInt; y++) {
+		for (int x = 0; x < imageWidth; x++) {
+			for (int y = 0; y < imageHeight; y++) {
 				int pixel = pixelReader.getArgb(x, y);
 
 				int red = ((pixel >> 16) & 0xff);

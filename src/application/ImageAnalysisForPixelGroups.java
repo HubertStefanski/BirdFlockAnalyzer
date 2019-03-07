@@ -18,9 +18,8 @@ public class ImageAnalysisForPixelGroups {
 	}
 
 	public static List<PixelGroups> findPixelGroups(BufferedImage bi, int noiseReduction) {
-
-		int imageHeightInt = (int) MainMenuController.bufferedImage.getHeight();
-		int imageWidthInt = (int) MainMenuController.bufferedImage.getWidth();
+		int imageHeightInt = bi.getHeight();
+		int imageWidthInt = bi.getWidth();
 		QuickUnionFind uFind = new QuickUnionFind(imageWidthInt * imageHeightInt);
 
 		for (int x = 0; x < imageWidthInt; x++) {

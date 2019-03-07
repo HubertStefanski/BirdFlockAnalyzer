@@ -1,15 +1,14 @@
 package application;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.event.ChangeEvent;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -48,7 +47,7 @@ public class MainMenuController {
 	@FXML
 	Button analyseFlockDataButton;
 	@FXML
-	Text fileNameText, fileDimensionText, filePathText, numberOfBirdsText, FlockPatternText, brightnessText,
+	Text fileNameText, fileDimensionsText, filePathText, numberOfBirdsText, FlockPatternText, brightnessText,
 			noiseReductionValueText, thresholdLevelSliderValueText;
 	/*
 	 * Variable initialization
@@ -58,11 +57,10 @@ public class MainMenuController {
 	public static BufferedImage bufferedImage;
 
 	File selectedFile;
-	public static int imageWidth;
-	public static int imageHeight;
 	String imageWidthString, imageHeightString;
 	int numberOfBirdsInt;
 	private int currentNoiseReduction = 1;
+	private int currentBlackWhiteThreshold = 127;
 
 	/*
 	 * >Opens File chooser >user picks file >method converts the file into
@@ -88,17 +86,14 @@ public class MainMenuController {
 				image = SwingFXUtils.toFXImage(bufferedImage, null);
 				String fileName = selectedFile.getName();
 				String filePath = selectedFile.getAbsolutePath();
-				double imageWidthDouble = image.getWidth();
-				double imageHeigthDouble = image.getHeight();
-				imageWidthString = Double.toString(imageHeigthDouble);
-				imageHeightString = Double.toString(imageWidthDouble);
 
 				mainImageView.setImage(image);
-				processSetToBlackAndWhite();
-				analyseFlockData(e);
+				processSetToBlackAndWhite(currentBlackWhiteThreshold);
+				// Uncomment this if you want to outline when an image is first opened.
+				// analyseFlockData(e);
 				filePathText.setText(filePath);
 				fileNameText.setText(fileName);
-				// fileDimensionText.setText("imageHeightString" + "imageWidthString");
+				fileDimensionsText.setText(bufferedImage.getWidth() + " x " + bufferedImage.getWidth());
 
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -113,68 +108,79 @@ public class MainMenuController {
 		}
 	}
 
-	public void processSetToBlackAndWhite() {
+	public void processSetToBlackAndWhite(int threshold) {
 		System.out.println(">Image sent to conversion");
-		Image processedBWImage = ToBlackAndWhiteConverter.processToBlackAndWhite(image,
-				ToBlackAndWhiteConverter.threshold);
+		Image processedBWImage = ToBlackAndWhiteConverter.processToBlackAndWhite(image, threshold);
 		System.out.println(">Image converted");
 		System.out.println(">Setting converted image to image view");
 		blackAndWhiteImageView.setFitHeight(163);
 		blackAndWhiteImageView.setFitWidth(391);
 		blackAndWhiteImageView.setImage(processedBWImage);
 		System.out.println(">converted Image set to image view");
-
 	}
 
 	@FXML
 	public void analyseFlockData(ActionEvent e) {
+		updateOutlinedImage();
+	}
+	
+	// Wrapper function for easy refreshing of the outlined image.
+	public void updateOutlinedImage() {
 		List<PixelGroups> pgs = ImageAnalysisForPixelGroups.findPixelGroups(ToBlackAndWhiteConverter.bufferedBwImage,
 				currentNoiseReduction);
-		drawBoxforEachPixelGroup(pgs);
+		drawPixelGroupsToImage(bufferedImage, pgs);
 	}
-
-	/*
-	 * Shuts down the application
-	 */
-
-	public void drawBoxforEachPixelGroup(List<PixelGroups> pgs) {
-		List<PixelGroups> pgs1 = ImageAnalysisForPixelGroups.findPixelGroups(bufferedImage, currentNoiseReduction);
-
-		for (PixelGroups pg : pgs1) {
-			Graphics2D box = bufferedImage.createGraphics();
+	
+	public void drawPixelGroupsToImage(BufferedImage bi, List<PixelGroups> pgs) {
+		// Copy image so when we're changing values we don't keep drawing boxes to the same image
+		BufferedImage imageCopy = copyImage(bi);
+		for (PixelGroups pg : pgs) {
+			Graphics2D box = imageCopy.createGraphics();
 			box.setColor(Color.BLUE);
 			box.drawRect(pg.getX1(), pg.getY1(), pg.getX2() - pg.getX1(), pg.getY2() - pg.getY1());
 			box.dispose();
 		}
-		image = SwingFXUtils.toFXImage(bufferedImage, null);
+		image = SwingFXUtils.toFXImage(imageCopy, null);
 		mainImageView.setImage(image);
-		numberOfBirdsInt = pgs.size();
 
-		numberOfBirdsText.setText(Integer.toString(numberOfBirdsInt));
+		numberOfBirdsText.setText(Integer.toString(pgs.size()));
 	}
-
+	
+	private BufferedImage copyImage(final BufferedImage image) {
+		final BufferedImage copy = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		Graphics copyGraphics = copy.getGraphics();
+		copyGraphics.drawImage(image, 0, 0, null);
+		copyGraphics.dispose();
+		return copy;
+	}
+	
 	@FXML
 	public void initialize() {
-		System.out.println("init");
 		setNoiseReductionSlider.setValue(currentNoiseReduction);
+		// Noise reduction should never be below 1, that would be all pixels.
+		setNoiseReductionSlider.setMin(1);
 		setNoiseReductionSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				currentNoiseReduction = newValue.intValue();
-				noiseReductionValueText.setText(Integer.toString(currentNoiseReduction));
-				numberOfBirdsText.setText(Integer.toString(numberOfBirdsInt));
-				drawBoxforEachPixelGroup(null);
+				if (image != null) {
+					currentNoiseReduction = newValue.intValue();
+					noiseReductionValueText.setText(Integer.toString(currentNoiseReduction));
+					numberOfBirdsText.setText(Integer.toString(numberOfBirdsInt));
+					updateOutlinedImage();
+				}
 			}
 
 		});
-		setThresholdSlider.setValue(ToBlackAndWhiteConverter.threshold);
+		setThresholdSlider.setValue(currentBlackWhiteThreshold);
 		setThresholdSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				ToBlackAndWhiteConverter.threshold = newValue.intValue();
-				processSetToBlackAndWhite();
-				thresholdLevelSliderValueText.setText(Integer.toString(ToBlackAndWhiteConverter.threshold));
+				if (image != null) {
+					currentBlackWhiteThreshold = newValue.intValue();
+					processSetToBlackAndWhite(currentBlackWhiteThreshold);
+					thresholdLevelSliderValueText.setText(Integer.toString(currentBlackWhiteThreshold));
+				}
 			}
 		});
 	}
