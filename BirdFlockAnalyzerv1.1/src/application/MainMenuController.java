@@ -60,6 +60,7 @@ public class MainMenuController {
 	 */
 
 	public static Image image;
+	public static Image copyOfImage;
 	public static BufferedImage bufferedImage;
 
 	File selectedFile;
@@ -67,7 +68,7 @@ public class MainMenuController {
 	public static int imageHeight;
 	String imageWidthString, imageHeightString;
 	static List<PixelGroups> pgs;
-	private static int birdSequentialNumber = 0;
+	private int birdSequentialNumber = 0;
 
 	// default value for the black and white conversion, can be set
 	// trough setThresholdSlider
@@ -87,19 +88,13 @@ public class MainMenuController {
 	public void openFileChooser(ActionEvent e) {
 
 		FileChooser fileChooser = new FileChooser();
-		// TODO: extension filter to be properly implemented
-		// FileChooser.ExtensionFilter extFilter = new
-		// FileChooser.ExtensionFilter("image Files",
-		// "Image files (.jpg, .jpeg, .jpe, .jfif, .png) | .jpg; .jpeg; .jpe; .jfif;
-		// .png");
-		// fileChooser.getExtensionFilters().add(extFilter);
-
 		selectedFile = fileChooser.showOpenDialog(null);
 
 		if (selectedFile != null) {
 			try {
 				bufferedImage = ImageIO.read(selectedFile);
 				image = SwingFXUtils.toFXImage(bufferedImage, null);
+				copyOfImage = image;
 				String fileName = selectedFile.getName();
 				String filePath = selectedFile.getAbsolutePath();
 				double imageWidthDouble = image.getWidth();
@@ -135,7 +130,7 @@ public class MainMenuController {
 	 */
 	public void processSetToBlackAndWhite() {
 		System.out.println(">Image sent to conversion");
-		Image processedBWImage = ToBlackAndWhiteConverter.processToBlackAndWhite(image, threshold);
+		Image processedBWImage = ToBlackAndWhiteConverter.processToBlackAndWhite(copyOfImage, threshold);
 		System.out.println(">Image converted");
 		System.out.println(">Setting converted image to image view");
 		blackAndWhiteImageView.setFitHeight(300);
@@ -177,7 +172,7 @@ public class MainMenuController {
 			box.dispose();
 			numbering.setColor(Color.BLUE);
 			numbering.drawString(birdSequentialNumber + 1 + "", pg.getX1(), pg.getY1());
-			//numbering.setFont(new Font("Arial",Font.PLAIN,imageWidth/50));
+			// numbering.setFont(new Font("Arial",Font.PLAIN,imageWidth/50));
 			birdSequentialNumber++;
 			box.dispose();
 			numbering.dispose();
@@ -244,6 +239,9 @@ public class MainMenuController {
 		Platform.exit();
 
 	}
+	/*
+	 * Launch method
+	 */
 
 	public static void main(String[] args) {
 		Application.launch(args);

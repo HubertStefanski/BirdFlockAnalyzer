@@ -1,6 +1,8 @@
 /*
  * @author Hubert Stefanski
+
  * @version 1.1 (Added functionality above bare-bones)
+ * this class returns coordinates used to draw boxes around groups of pixels(birds)
  */
 package application;
 

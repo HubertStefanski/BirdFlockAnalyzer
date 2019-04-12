@@ -56,6 +56,12 @@ public class QuickUnionFind implements UnionFind {
 	public boolean connected(int p, int q) {
 		return root(p) == root(q);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see application.UnionFind#getNumberOfTrees(int)
+	 * overrides the method from 
+	 */
 
 	@Override
 	public int getNumberOfTrees(final int noiseReduction) {
@@ -69,6 +75,11 @@ public class QuickUnionFind implements UnionFind {
 		return s.size();
 
 	}
+	/*
+	 * gets the root of each union of pixels, usually the first pixel in the set is
+	 * to be considered it's root
+	 * 
+	 */
 
 	public Set<Integer> getRoots(final int noiseReduction) {
 		Set<Integer> s = new HashSet<Integer>();
@@ -79,7 +90,9 @@ public class QuickUnionFind implements UnionFind {
 		}
 		return s;
 	}
-
+  /*
+   * returns all pixels in an data set of pixels, this
+   */
 	public List<Integer> getElementsOfTree(final int node) {
 		final int rootNode = root(node);
 		if (rootNode == node && size[node] == 1) {

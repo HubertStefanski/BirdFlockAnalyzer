@@ -23,9 +23,13 @@ class ToBlackAndWhiteConverter {
 	static int bwPixel = 0;
 	static WritableImage bwImage;
 	static BufferedImage bufferedBwImage;
-	// default value for the threshold, roughly midway from 0-255
-//	static int threshold = 127;
 
+	/*
+	 * main method for processing the image to black and white, taking in the main
+	 * image `image` from the file chosen, returns a black and white image, taking
+	 * into account the thresshold for the black and white image set by the user in
+	 * the mainMenuController with the BlackAndWhiteThreshold slider
+	 */
 	static Image processToBlackAndWhite(Image image, int threshold) {
 		Image localImage;
 		localImage = SwingFXUtils.toFXImage(MainMenuController.bufferedImage, null);
